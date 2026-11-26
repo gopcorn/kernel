@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: sdk/go.mod
+      - name: Create a workspace
+        run: |
+          go work init
+          go work use -r .
+      - run: make vet
+      - run: make test
+      - run: make isolation
