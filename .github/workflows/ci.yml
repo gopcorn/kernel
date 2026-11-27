@@ -10,10 +10,11 @@ jobs:
   workspace:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: sdk/go.mod
+          cache: false
       - name: Create a workspace
         run: |
           go work init
@@ -27,10 +28,11 @@ jobs:
     env:
       GOWORK: "off"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: sdk/go.mod
+          cache: false
       - name: Test each module against released versions
         run: |
           for m in sdk kernel client adapters conformance; do
