@@ -17,10 +17,13 @@ build:
 test:
 	@for m in $(MODULES); do echo "== $$m"; (cd $$m && go test -race ./...) || exit 1; done
 
-# sdk imports nothing from this repository; kernel imports only sdk.
+# Rule 1: sdk imports nothing else from this repository
+# Rule 2: kernel only imports sdk (and itself)
 isolation:
-	@for m in kernel; do \
-	  deps=$$(cd $$m && go list -deps ./...) || { echo "go list failed in $$m"; exit 1; }; \
-	  bad=$$(echo "$$deps" | grep -E 'gopcorn/(client|adapters|conformance|testfeatures)' || true); \
-	  [ -z "$$bad" ] || { echo "kernel imports forbidden packages:"; echo "$$bad"; exit 1; }; \
-	done; echo "isolation ok"
+	@bad=$$(cd sdk && go list -deps -f '{{if not .Standard}}{{.ImportPath}}{{end}}' ./... \
+	  | grep '^$(MODPATH)/' | grep -Ev '^$(MODPATH)/sdk(/|$$)' || true); \
+	[ -z "$$bad" ] || { echo "sdk imports other repo packages:"; echo "$$bad"; exit 1; }
+	@bad=$$(cd kernel && go list -deps -f '{{if not .Standard}}{{.ImportPath}}{{end}}' ./... \
+	  | grep '^$(MODPATH)/' | grep -Ev '^$(MODPATH)/(sdk|kernel)(/|$$)' || true); \
+	[ -z "$$bad" ] || { echo "kernel imports forbidden repo packages:"; echo "$$bad"; exit 1; }
+	@echo "isolation ok"

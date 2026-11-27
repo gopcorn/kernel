@@ -2,8 +2,9 @@ name: ci
 
 on:
   pull_request:
+    branches: [main, dev]
   push:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
   workspace:
@@ -20,3 +21,18 @@ jobs:
       - run: make vet
       - run: make test
       - run: make isolation
+
+  released:
+    runs-on: ubuntu-latest
+    env:
+      GOWORK: "off"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: sdk/go.mod
+      - name: Test each module against released versions
+        run: |
+          for m in sdk kernel client adapters conformance; do
+            (cd $m && go test -race ./...)
+          done
