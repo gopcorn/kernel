@@ -7,11 +7,11 @@
   "tag-separator": "/",
   "include-v-in-tag": true,
   "separate-pull-requests": true,
-    "packages": {
-    "sdk":         { "component": "sdk",         "release-as": "0.1.0" },
-    "kernel":      { "component": "kernel",      "release-as": "0.1.0" },
-    "client":      { "component": "client",      "release-as": "0.1.0" },
-    "adapters":    { "component": "adapters",    "release-as": "0.1.0" },
-    "conformance": { "component": "conformance", "release-as": "0.1.0" }
+  "packages": {
+    "sdk": { "component": "sdk" },
+    "kernel": { "component": "kernel" },
+    "client": { "component": "client" },
+    "adapters": { "component": "adapters" },
+    "conformance": { "component": "conformance" }
   }
 }
